@@ -42,7 +42,7 @@ td{border-bottom:1px solid var(--line);padding:6px 8px;text-align:center}td.l{te
  <div class=grp>기준</div><a class=nv data-p=cri>판정 기준</a>
 </div>
 <div id=main>
-<div id=hdr><h1 id=hdr-t>종합 현황</h1><span class="bdg b-live">● LIVE</span><span class="bdg b-date">08-20</span><span class="bdg b-warn">⚠ MDP 일정 10일 경과 — 예정입고일 </span></div>
+<div id=hdr><h1 id=hdr-t>종합 현황</h1><span class="bdg b-live">● LIVE</span><span class="bdg b-date">08-21</span><span class="bdg b-warn">⚠ MDP 일정 10일 경과 — 예정입고일 </span></div>
 <div class="pg on" id=pg-home>
 <div class=cards>
 <div class=kpi style="border-top-color:var(--rd);--kbg:#fdeeea" onclick="go('logi')"><div class=k>🔴 매입 필요</div><div class=v style="color:var(--rd)">25</div><div class=d>물류까지 바닥 — MD 발주</div></div>
@@ -60,18 +60,18 @@ td{border-bottom:1px solid var(--line);padding:6px 8px;text-align:center}td.l{te
 </div>
 <div class=note>홈 숫자 = 매일 아침 자동갱신 실데이터 · 좌측 메뉴 = 각 상세 판</div>
 </div>
-<div class=pg id=pg-buy><iframe data-src="https://lovelyjinny.github.io/item-board/?v=2608202206"></iframe></div>
-<div class=pg id=pg-fb><iframe data-src="https://lovelyjinny.github.io/OPR_FEEDBACK_BOARD/?v=2608202206"></iframe></div>
-<div class=pg id=pg-scm><iframe data-src="https://lovelyjinny.github.io/OPR_SCM_BOARD/?v=2608202206"></iframe></div>
-<div class=pg id=pg-logi><iframe data-src="https://lovelyjinny.github.io/OPR_LOGISTICS_BOARD/#md?v=2608202206"></iframe></div>
-<div class=pg id=pg-flow><iframe data-src="https://lovelyjinny.github.io/OPR_SCM_BOARD/#flow?v=2608202206"></iframe></div>
-<div class=pg id=pg-lpu><iframe data-src="https://lovelyjinny.github.io/OPR_LOGISTICS_BOARD/#pu?v=2608202206"></iframe></div>
-<div class=pg id=pg-ltr><iframe data-src="https://lovelyjinny.github.io/OPR_LOGISTICS_BOARD/#tr?v=2608202206"></iframe></div>
-<div class=pg id=pg-lin><iframe data-src="https://lovelyjinny.github.io/OPR_LOGISTICS_BOARD/#in?v=2608202206"></iframe></div>
-<div class=pg id=pg-lwk><iframe data-src="https://lovelyjinny.github.io/OPR_LOGISTICS_BOARD/#wk?v=2608202206"></iframe></div>
-<div class=pg id=pg-lvs><iframe data-src="https://lovelyjinny.github.io/OPR_LOGISTICS_BOARD/#vs?v=2608202206"></iframe></div>
-<div class=pg id=pg-store><iframe data-src="https://lovelyjinny.github.io/OPR_STORE_BOARD/?v=2608202206"></iframe></div>
-<div class=pg id=pg-cri><iframe data-src="https://lovelyjinny.github.io/OPR_SCM_BOARD/criteria.html?v=2608202206"></iframe></div>
+<div class=pg id=pg-buy><iframe data-src="https://lovelyjinny.github.io/item-board/?v=2608210258"></iframe></div>
+<div class=pg id=pg-fb><iframe data-src="https://lovelyjinny.github.io/OPR_FEEDBACK_BOARD/?v=2608210258"></iframe></div>
+<div class=pg id=pg-scm><iframe data-src="https://lovelyjinny.github.io/OPR_SCM_BOARD/?v=2608210258"></iframe></div>
+<div class=pg id=pg-logi><iframe data-src="https://lovelyjinny.github.io/OPR_LOGISTICS_BOARD/?v=2608210258#md"></iframe></div>
+<div class=pg id=pg-flow><iframe data-src="https://lovelyjinny.github.io/OPR_SCM_BOARD/?v=2608210258#flow"></iframe></div>
+<div class=pg id=pg-lpu><iframe data-src="https://lovelyjinny.github.io/OPR_LOGISTICS_BOARD/?v=2608210258#pu"></iframe></div>
+<div class=pg id=pg-ltr><iframe data-src="https://lovelyjinny.github.io/OPR_LOGISTICS_BOARD/?v=2608210258#tr"></iframe></div>
+<div class=pg id=pg-lin><iframe data-src="https://lovelyjinny.github.io/OPR_LOGISTICS_BOARD/?v=2608210258#in"></iframe></div>
+<div class=pg id=pg-lwk><iframe data-src="https://lovelyjinny.github.io/OPR_LOGISTICS_BOARD/?v=2608210258#wk"></iframe></div>
+<div class=pg id=pg-lvs><iframe data-src="https://lovelyjinny.github.io/OPR_LOGISTICS_BOARD/?v=2608210258#vs"></iframe></div>
+<div class=pg id=pg-store><iframe data-src="https://lovelyjinny.github.io/OPR_STORE_BOARD/?v=2608210258"></iframe></div>
+<div class=pg id=pg-cri><iframe data-src="https://lovelyjinny.github.io/OPR_SCM_BOARD/criteria.html?v=2608210258"></iframe></div>
 </div><script>
 var T={home:'종합 현황',buy:'아이템별 매입현황',fb:'피드백판',scm:'SCM 아이템 상세',flow:'통합 흐름판 (P단위)',logi:'물류 — MD 판단표',lpu:'물류 — 필업',ltr:'물류 — 필업 지시·이행',lin:'물류 — 입고 예정',lwk:'물류 — 작업 현황',lvs:'물류 — 피드백 (예정 vs 실적)',store:'매장×아이템 · 과잉',cri:'판정 기준'};
 function go(p){
@@ -79,7 +79,7 @@ function go(p){
   document.querySelectorAll('.pg').forEach(function(x){x.classList.toggle('on',x.id==='pg-'+p);});
   document.getElementById('hdr-t').textContent=T[p]||p;
   var f=document.querySelector('#pg-'+p+' iframe');
-  if(f&&!f.src){ var sep=f.dataset.src.indexOf('?')>=0?'&':'?'; f.src=f.dataset.src+sep+'t='+Date.now(); }
+  if(f&&!f.src){ var u=f.dataset.src.split('#'), q=(u[0].indexOf('?')>=0?'&':'?')+'t='+Date.now(); f.src=u[0]+q+(u[1]?('#'+u[1]):''); }
   window.scrollTo(0,0);
 }
 document.querySelectorAll('.nv').forEach(function(a){a.addEventListener('click',function(){go(a.dataset.p);});});
