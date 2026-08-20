@@ -1,4 +1,4 @@
-<!doctype html><html lang=ko><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>OPR SCM 모니터링 (통합 시안)</title><style>
+<!doctype html><html lang=ko><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>OPR SCM 모니터링</title><style>
 :root{--ink:#1f2733;--ink2:#5c6773;--mut:#98a1ac;--line:#e6e9ee;--bg:#f4f1ea;--srf:#fff;--nav:#faf8f3;--acc:#27395e;--rd:#c0392b;--rdbg:#fdeeea;--am:#9a6b00;--ambg:#fcf3d7;--gn:#1e7a46;--gnbg:#e7f4ec;--bl:#2b6cb0;--blbg:#e8f0fa}
 *{box-sizing:border-box}body{font-family:'Malgun Gothic','Segoe UI',sans-serif;margin:0;background:var(--bg);color:var(--ink);display:flex;min-height:100vh}
 #side{width:220px;background:var(--nav);border-right:1px solid var(--line);padding:18px 0;flex-shrink:0;position:sticky;top:0;height:100vh;overflow-y:auto}
@@ -31,7 +31,7 @@ td{border-bottom:1px solid var(--line);padding:6px 8px;text-align:center}td.l{te
 #pg-home.pg{display:none}#pg-home.pg.on{display:block}
 </style><body>
 <div id=side>
- <div class=logo><b>ELAND</b><span class=s>OPR SCM</span><span class=t>통합 모니터링 · 시안</span></div>
+ <div class=logo><b>ELAND</b><span class=s>OPR SCM</span><span class=t>통합 모니터링</span></div>
  <div class=grp>종합</div><a class="nv on" data-p=home>🏠 종합 현황</a>
  <div class=grp>매입</div><a class=nv data-p=buy>아이템별 매입현황</a><a class=nv data-p=fb>피드백판 25FW·26SS</a>
  <div class=grp>공급 (SCM)</div><a class=nv data-p=scm>아이템 상세 · 흐름판</a>
@@ -40,7 +40,7 @@ td{border-bottom:1px solid var(--line);padding:6px 8px;text-align:center}td.l{te
  <div class=grp>기준</div><a class=nv data-p=cri>판정 기준</a>
 </div>
 <div id=main>
-<div id=hdr><h1 id=hdr-t>종합 현황</h1><span class="bdg b-mock">시안 — 기존 판은 그대로 운영 중</span><span class="bdg b-live">● LIVE</span><span class="bdg b-date">08-20</span><span class="bdg b-warn">⚠ MDP 일정 10일 경과 — 예정입고일 </span></div>
+<div id=hdr><h1 id=hdr-t>종합 현황</h1><span class="bdg b-live">● LIVE</span><span class="bdg b-date">08-20</span><span class="bdg b-warn">⚠ MDP 일정 10일 경과 — 예정입고일 </span></div>
 <div class="pg on" id=pg-home>
 <div class=cards>
 <div class=kpi style="border-top-color:var(--rd)" onclick="go('logi')"><div class=k>🔴 매입 필요</div><div class=v style="color:var(--rd)">26</div><div class=d>물류까지 바닥 — MD 발주</div></div>
@@ -56,14 +56,14 @@ td{border-bottom:1px solid var(--line);padding:6px 8px;text-align:center}td.l{te
 <div class=box><h2>💰 펀드 잔액 (M)</h2><table><tr><th>셀</th><th>펀드</th><th>발주</th><th>확약</th><th>잔액</th></tr><tr><td><i class=dot style="background:#c2557e"></i>여성</td><td class=n>3,612</td><td class=n>1,947</td><td class=n>430</td><td class=n style="font-weight:800;color:var(--gn)">1,235</td></tr><tr><td><i class=dot style="background:#2b6cb0"></i>남성</td><td class=n>3,831</td><td class=n>2,473</td><td class=n>1,272</td><td class=n style="font-weight:800;color:var(--rd)">86</td></tr><tr><td><i class=dot style="background:#c58f1b"></i>아동</td><td class=n>1,861</td><td class=n>871</td><td class=n>450</td><td class=n style="font-weight:800;color:var(--gn)">540</td></tr><tr><td><i class=dot style="background:#38857a"></i>잡화</td><td class=n>1,642</td><td class=n>877</td><td class=n>154</td><td class=n style="font-weight:800;color:var(--gn)">610</td></tr></table></div>
 <div class=box><h2>📐 1%p 기여 환산</h2><table><tr><th>셀</th><th>소진율 +1%p</th><th>정판율 +1%p</th></tr><tr><td class=l>여성셀</td><td class=n>+31.9M</td><td class=n>+29.5M</td></tr><tr><td class=l>남스셀</td><td class=n>+25.9M</td><td class=n>+19.8M</td></tr><tr><td class=l>아동셀</td><td class=n>+23.9M</td><td class=n>+25.6M</td></tr><tr><td class=l>여성</td><td class=n>+46.7M</td><td class=n>+11.1M</td></tr><tr><td class=l>남성</td><td class=n>+43.4M</td><td class=n>+11.7M</td></tr><tr><td class=l>아동</td><td class=n>+32.4M</td><td class=n>+10.6M</td></tr></table><div class=note>판매이익+평가감 절감(50% 회사규칙) / 총입고×실측 할인폭</div></div>
 </div>
-<div class=note>🧪 <b>시안입니다</b> — 홈의 모든 숫자는 오늘 08:30 갱신 실데이터. 좌측 메뉴의 각 판은 기존 웹앱을 그대로 표시(확정 시 같은 틀로 이식). 기존 주소 5개는 변경 없음.</div>
+<div class=note>홈 숫자 = 매일 아침 자동갱신 실데이터 · 좌측 메뉴 = 각 상세 판</div>
 </div>
-<div class=pg id=pg-buy><div class=ibar>기존 판을 그대로 표시 중 (시안 — 확정 시 이 틀 안에 통합 이식)</div><iframe data-src="https://lovelyjinny.github.io/item-board/"></iframe></div>
-<div class=pg id=pg-fb><div class=ibar>기존 판을 그대로 표시 중 (시안 — 확정 시 이 틀 안에 통합 이식)</div><iframe data-src="https://lovelyjinny.github.io/OPR_FEEDBACK_BOARD/"></iframe></div>
-<div class=pg id=pg-scm><div class=ibar>기존 판을 그대로 표시 중 (시안 — 확정 시 이 틀 안에 통합 이식)</div><iframe data-src="https://lovelyjinny.github.io/OPR_SCM_BOARD/"></iframe></div>
-<div class=pg id=pg-logi><div class=ibar>기존 판을 그대로 표시 중 (시안 — 확정 시 이 틀 안에 통합 이식)</div><iframe data-src="https://lovelyjinny.github.io/OPR_LOGISTICS_BOARD/"></iframe></div>
-<div class=pg id=pg-store><div class=ibar>기존 판을 그대로 표시 중 (시안 — 확정 시 이 틀 안에 통합 이식)</div><iframe data-src="https://lovelyjinny.github.io/OPR_STORE_BOARD/"></iframe></div>
-<div class=pg id=pg-cri><div class=ibar>기존 판을 그대로 표시 중 (시안 — 확정 시 이 틀 안에 통합 이식)</div><iframe data-src="https://lovelyjinny.github.io/OPR_SCM_BOARD/criteria.html"></iframe></div>
+<div class=pg id=pg-buy><iframe data-src="https://lovelyjinny.github.io/item-board/"></iframe></div>
+<div class=pg id=pg-fb><iframe data-src="https://lovelyjinny.github.io/OPR_FEEDBACK_BOARD/"></iframe></div>
+<div class=pg id=pg-scm><iframe data-src="https://lovelyjinny.github.io/OPR_SCM_BOARD/"></iframe></div>
+<div class=pg id=pg-logi><iframe data-src="https://lovelyjinny.github.io/OPR_LOGISTICS_BOARD/"></iframe></div>
+<div class=pg id=pg-store><iframe data-src="https://lovelyjinny.github.io/OPR_STORE_BOARD/"></iframe></div>
+<div class=pg id=pg-cri><iframe data-src="https://lovelyjinny.github.io/OPR_SCM_BOARD/criteria.html"></iframe></div>
 </div><script>
 var T={home:'종합 현황',buy:'아이템별 매입현황',fb:'피드백판 25FW·26SS',scm:'SCM 아이템 상세 · 흐름판',logi:'물류 — MD 판단표 · 지시·이행',store:'매장×아이템 · 과잉',cri:'판정 기준'};
 function go(p){
