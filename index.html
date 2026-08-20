@@ -8,7 +8,7 @@
 #side a{display:block;padding:10px 16px 10px 20px;font-size:15.5px;color:#e8ecf4;text-decoration:none;font-weight:700;border-left:4px solid transparent;cursor:pointer}
 #side a::before{content:'';display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:9px;background:var(--gc,#98a1ac);vertical-align:1px}
 #side a:hover{background:rgba(255,255,255,.10)}#side a.on{background:rgba(255,255,255,.16);color:#fff;border-left-color:#f2c14e}
-#side a[data-p=home]{--gc:#27395e}#side a[data-p=buy],#side a[data-p=fb]{--gc:#c2557e}#side a[data-p=scm],#side a[data-p=flow]{--gc:#2b6cb0}#side a[data-p=logi]{--gc:#c58f1b}#side a[data-p=store]{--gc:#38857a}#side a[data-p=cri]{--gc:#7c3aed}
+#side a[data-p=home]{--gc:#27395e}#side a[data-p=buy],#side a[data-p=fb]{--gc:#c2557e}#side a[data-p=scm],#side a[data-p=flow]{--gc:#2b6cb0}#side a[data-p=logi],#side a[data-p=lpu],#side a[data-p=ltr],#side a[data-p=lin],#side a[data-p=lwk],#side a[data-p=lvs]{--gc:#c58f1b}#side a[data-p=store]{--gc:#38857a}#side a[data-p=cri]{--gc:#7c3aed}
 #main{flex:1;min-width:0;display:flex;flex-direction:column}
 #hdr{background:var(--srf);border-bottom:1px solid var(--line);padding:12px 22px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:5}
 #hdr h1{font-size:17px;margin:0;font-weight:800}
@@ -37,7 +37,7 @@ td{border-bottom:1px solid var(--line);padding:6px 8px;text-align:center}td.l{te
  <div class=grp>종합</div><a class="nv on" data-p=home>🏠 종합 현황</a>
  <div class=grp>매입</div><a class=nv data-p=buy>아이템별 매입현황</a><a class=nv data-p=fb>피드백판</a>
  <div class=grp>공급 (SCM)</div><a class=nv data-p=scm>아이템 상세</a><a class=nv data-p=flow>통합 흐름판</a>
- <div class=grp>물류</div><a class=nv data-p=logi>MD 판단표 · 지시·이행</a>
+ <div class=grp>물류</div><a class=nv data-p=logi>MD 판단표</a><a class=nv data-p=lpu>필업</a><a class=nv data-p=ltr>필업 지시·이행</a><a class=nv data-p=lin>입고 예정</a><a class=nv data-p=lwk>물류 작업 현황</a><a class=nv data-p=lvs>피드백 (예정 vs 실적)</a>
  <div class=grp>매장</div><a class=nv data-p=store>매장×아이템 · 과잉</a>
  <div class=grp>기준</div><a class=nv data-p=cri>판정 기준</a>
 </div>
@@ -60,15 +60,20 @@ td{border-bottom:1px solid var(--line);padding:6px 8px;text-align:center}td.l{te
 </div>
 <div class=note>홈 숫자 = 매일 아침 자동갱신 실데이터 · 좌측 메뉴 = 각 상세 판</div>
 </div>
-<div class=pg id=pg-buy><iframe data-src="https://lovelyjinny.github.io/item-board/?v=2608202202"></iframe></div>
-<div class=pg id=pg-fb><iframe data-src="https://lovelyjinny.github.io/OPR_FEEDBACK_BOARD/?v=2608202202"></iframe></div>
-<div class=pg id=pg-scm><iframe data-src="https://lovelyjinny.github.io/OPR_SCM_BOARD/?v=2608202202"></iframe></div>
-<div class=pg id=pg-logi><iframe data-src="https://lovelyjinny.github.io/OPR_LOGISTICS_BOARD/?v=2608202202"></iframe></div>
-<div class=pg id=pg-flow><iframe data-src="https://lovelyjinny.github.io/OPR_SCM_BOARD/#flow?v=2608202202"></iframe></div>
-<div class=pg id=pg-store><iframe data-src="https://lovelyjinny.github.io/OPR_STORE_BOARD/?v=2608202202"></iframe></div>
-<div class=pg id=pg-cri><iframe data-src="https://lovelyjinny.github.io/OPR_SCM_BOARD/criteria.html?v=2608202202"></iframe></div>
+<div class=pg id=pg-buy><iframe data-src="https://lovelyjinny.github.io/item-board/?v=2608202206"></iframe></div>
+<div class=pg id=pg-fb><iframe data-src="https://lovelyjinny.github.io/OPR_FEEDBACK_BOARD/?v=2608202206"></iframe></div>
+<div class=pg id=pg-scm><iframe data-src="https://lovelyjinny.github.io/OPR_SCM_BOARD/?v=2608202206"></iframe></div>
+<div class=pg id=pg-logi><iframe data-src="https://lovelyjinny.github.io/OPR_LOGISTICS_BOARD/#md?v=2608202206"></iframe></div>
+<div class=pg id=pg-flow><iframe data-src="https://lovelyjinny.github.io/OPR_SCM_BOARD/#flow?v=2608202206"></iframe></div>
+<div class=pg id=pg-lpu><iframe data-src="https://lovelyjinny.github.io/OPR_LOGISTICS_BOARD/#pu?v=2608202206"></iframe></div>
+<div class=pg id=pg-ltr><iframe data-src="https://lovelyjinny.github.io/OPR_LOGISTICS_BOARD/#tr?v=2608202206"></iframe></div>
+<div class=pg id=pg-lin><iframe data-src="https://lovelyjinny.github.io/OPR_LOGISTICS_BOARD/#in?v=2608202206"></iframe></div>
+<div class=pg id=pg-lwk><iframe data-src="https://lovelyjinny.github.io/OPR_LOGISTICS_BOARD/#wk?v=2608202206"></iframe></div>
+<div class=pg id=pg-lvs><iframe data-src="https://lovelyjinny.github.io/OPR_LOGISTICS_BOARD/#vs?v=2608202206"></iframe></div>
+<div class=pg id=pg-store><iframe data-src="https://lovelyjinny.github.io/OPR_STORE_BOARD/?v=2608202206"></iframe></div>
+<div class=pg id=pg-cri><iframe data-src="https://lovelyjinny.github.io/OPR_SCM_BOARD/criteria.html?v=2608202206"></iframe></div>
 </div><script>
-var T={home:'종합 현황',buy:'아이템별 매입현황',fb:'피드백판',scm:'SCM 아이템 상세',flow:'통합 흐름판 (P단위)',logi:'물류 — MD 판단표 · 지시·이행',store:'매장×아이템 · 과잉',cri:'판정 기준'};
+var T={home:'종합 현황',buy:'아이템별 매입현황',fb:'피드백판',scm:'SCM 아이템 상세',flow:'통합 흐름판 (P단위)',logi:'물류 — MD 판단표',lpu:'물류 — 필업',ltr:'물류 — 필업 지시·이행',lin:'물류 — 입고 예정',lwk:'물류 — 작업 현황',lvs:'물류 — 피드백 (예정 vs 실적)',store:'매장×아이템 · 과잉',cri:'판정 기준'};
 function go(p){
   document.querySelectorAll('.nv').forEach(function(a){a.classList.toggle('on',a.dataset.p===p);});
   document.querySelectorAll('.pg').forEach(function(x){x.classList.toggle('on',x.id==='pg-'+p);});
