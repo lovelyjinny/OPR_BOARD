@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OPR 이머니 시뮬레이션 판 (상반기)</title>
+<style>
+:root{--ink:#2F3437;--ivory:#F7F5F0;--gold:#B99A5B;--burg:#8C2F39;--mute:#7A7A7A;--line:#D9D5CC;--white:#FFFFFF;--panel:#FBFAF7}
+*{box-sizing:border-box}
+body{margin:0;font-family:"맑은 고딕","Malgun Gothic",sans-serif;background:var(--ivory);color:var(--ink);font-size:15px;line-height:1.5}
+header{background:var(--ink);color:var(--ivory);padding:14px 28px;display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px}
+header h1{margin:0;font-size:21px;font-weight:700}
+header .sub{font-size:13px;color:#CFC9BC}
+.wrap{padding:16px 28px 40px;max-width:1700px;margin:0 auto}
+.panel{background:var(--white);border:1px solid var(--line);border-radius:10px;padding:14px 18px;margin-bottom:16px}
+h2{font-size:16px;margin:0 0 10px;padding-bottom:6px;border-bottom:2px solid var(--gold)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px 18px}
+.box{border:1px solid var(--line);border-radius:8px;padding:10px 12px;background:var(--panel)}
+.box .t{font-size:13px;color:var(--mute);margin-bottom:6px;display:flex;justify-content:space-between}
+.box .t b{color:var(--ink)}
+.f{display:flex;align-items:center;gap:6px;margin:4px 0;flex-wrap:wrap}
+.f label{font-size:14px;min-width:150px}
+input[type=number]{width:78px;padding:5px 7px;border:1px solid var(--line);border-radius:6px;font-size:16px;font-weight:700;text-align:right;color:var(--burg)}
+select{padding:5px 7px;border:1px solid var(--line);border-radius:6px;font-size:14px}
+.unit{font-size:13px;color:var(--mute)}
+.btns{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+button{border:1px solid var(--ink);background:var(--white);color:var(--ink);border-radius:6px;padding:4px 10px;font-size:13px;cursor:pointer}
+button.primary{background:var(--ink);color:var(--ivory)}
+button:hover{border-color:var(--gold)}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-bottom:6px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:9px 12px}
+.card .k{font-size:12px;color:var(--mute)}
+.card .v{font-size:25px;font-weight:700;margin-top:1px}
+.card .s{font-size:12px;color:var(--mute)}
+table{width:100%;border-collapse:collapse;font-size:14px;margin:4px 0 6px}
+table{border:1px solid var(--line)}
+th{background:var(--ink);color:var(--ivory);font-weight:600;padding:7px 8px;text-align:center;white-space:nowrap;border:1px solid #4A5055}
+td{padding:6px 8px;border:1px solid var(--line);text-align:center;white-space:nowrap}
+td.l{text-align:left}
+tr.sum td{font-weight:700;background:var(--panel)}
+.neg{color:var(--burg)}
+.pos{color:#2E5E3A}
+.muted{color:var(--mute)}
+details summary{cursor:pointer;font-weight:600;font-size:15px;margin:8px 0 6px}
+.note{font-size:12.5px;color:var(--mute);line-height:1.6}
+table:not(.show-det) .det{display:none}
+button.tg{border:1px solid #CFC9BC;background:transparent;color:var(--ivory);font-size:11px;padding:0 6px;margin-left:6px;border-radius:9px;cursor:pointer}
+table.show-det button.tg{background:var(--gold);color:var(--ink);border-color:var(--gold)}
+.pill{display:inline-block;font-size:11px;padding:0 6px;border-radius:9px;background:var(--line);margin-left:4px}
+</style>
+</head>
+<body>
+<header>
+  <h1>OPR 이머니 시뮬레이션 판 <span class="sub">상반기(2026.1~6월) · 백만원</span></h1>
+  <div class="sub">숫자를 바꾸면 아래 결과가 즉시 다시 계산됩니다 · 기존값 = 회사 현황판 6월누적</div>
+</header>
+<div class="wrap">
+
+<section class="panel">
+  <h2>비율 조정</h2>
+  <div class="grid">
+    <div class="box"><div class="t">① 매출 분할 <b id="rv"></b></div>
+      <div class="f"><label>MD 비율</label><input type="number" id="r" value="60" min="0" max="100" step="1"><span class="unit">%</span></div>
+      <div class="f"><label>목표 원가율 + 가산</label><input type="number" id="tc" value="35" step="0.1"><span class="unit">%</span><input type="number" id="tm" value="10" step="0.5" style="width:62px"><span class="unit">%p</span><button id="applyTc">적용</button></div>
+      <div class="btns"><button data-r="45">45:55 회사 목표</button><button data-r="60">60:40 실적 기준</button><button data-r="50">50:50 원안</button></div>
+    </div>
+    <div class="box"><div class="t">② MD : AMD 공헌 분배 <b id="msv"></b></div>
+      <div class="f"><label>MD 몫</label><input type="number" id="ms" value="70" min="0" max="100" step="1"><span class="unit">%</span></div>
+    </div>
+    <div class="box"><div class="t">③ 본부 영업 3명 몫 <b id="ssv"></b></div>
+      <div class="f"><label>전체 매장 남은돈 중</label><input type="number" id="ss" value="50" min="0" max="100" step="1"><span class="unit">%</span></div>
+      <div class="f"><label>3명 간 가중</label><select id="wm"><option value="equal">균등</option><option value="ach" selected>목표 달성률</option><option value="ppy">평당매출</option></select></div>
+    </div>
+    <div class="box"><div class="t">④ 매장 안 분배</div>
+      <div class="f"><label>점장 몫</label><input type="number" id="mp" value="30" min="0" max="100" step="1"><span class="unit">%</span></div>
+    </div>
+    <div class="box"><div class="t">⑤ 책임자 3명 (참고)</div>
+      <div class="f"><label>CD장 요율</label><input type="number" id="lr_cd" value="10" step="0.5"><span class="unit">% × 회사 영업이익</span></div>
+      <div class="f"><label>MD장 요율</label><input type="number" id="lr_md" value="5" step="0.5"><span class="unit">% × MD 조직 남은돈</span></div>
+      <div class="f"><label>영업 팀장 요율</label><input type="number" id="lr_sl" value="5" step="0.5"><span class="unit">% × 영업 조직 남은돈</span></div>
+      <div class="f"><label>쓴돈 급여 배수</label><input type="number" id="lmult" value="3.5" step="0.5"><span class="unit">배</span></div>
+      <div class="f"><label><input type="checkbox" id="dual" checked> 정수만 실무 몫 포함</label></div>
+    </div>
+  </div>
+  <div class="btns"><button id="reset" class="primary">초기값으로</button><button id="xlsx">⬇ 엑셀 다운로드</button></div>
+</section>
+
+<section class="panel">
+  <h2>결과</h2>
+  <div class="cards" id="cards"></div>
+</section>
+
+<section class="panel">
+  <h2>사람별 남은돈 (MD 9 + 영업 3)</h2>
+  <table id="tPeople"></table>
+</section>
+
+<section class="panel">
+  <h2>카테고리 (MD 쪽, MC 셀 기준)</h2>
+  <table id="tCat"></table>
+  <h2 style="margin-top:14px">영업 3명 (번돈·쓴돈·남은돈)</h2>
+  <table id="tSales"></table>
+  <div class="note" id="salesNote"></div>
+</section>
+
+<section class="panel">
+  <details><summary>매장별 (번돈·쓴돈·남은돈)</summary><table id="tPlant"></table></details>
+  <details><summary>책임자 3명 (참고)</summary><table id="tLead"></table></details>
+  <details><summary>확정된 것 · 기준 · 가정</summary><div class="note" id="notes"></div></details>
+</section>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script id="data" type="application/json">{
+ "period": "2026년 1~6월(상반기)",
+ "unit": "백만원",
+ "days": 181,
+ "cats": {
+  "여성": {
+   "sales": 5312.305,
+   "cost": 2786.921,
+   "gm": 2525.384,
+   "sga": 0,
+   "loss": 107.123,
+   "db_sales": 5348.352,
+   "db_cost": 4035.29
+  },
+  "남성": {
+   "sales": 6101.072,
+   "cost": 2931.672,
+   "gm": 3169.4,
+   "sga": 0,
+   "loss": 112.687,
+   "db_sales": 6142.472,
+   "db_cost": 4244.88
+  },
+  "아동": {
+   "sales": 2972.342,
+   "cost": 1354.016,
+   "gm": 1618.326,
+   "sga": 0,
+   "loss": 52.045,
+   "db_sales": 2992.512,
+   "db_cost": 1960.532
+  },
+  "잡화": {
+   "sales": 1314.971,
+   "cost": 848.788,
+   "gm": 466.183,
+   "sga": 0,
+   "loss": 32.626,
+   "db_sales": 1323.894,
+   "db_cost": 1228.992
+  }
+ },
+ "md": [
+  {
+   "name": "백서현",
+   "cat": "여성",
+   "role": "MD",
+   "role_label": "MD(여성)",
+   "labor6": 41.877,
+   "pay_m": 6.979417358333333,
+   "old6": 75.0,
+   "old7": 83.7,
+   "old_months": {
+    "1월": 0.0,
+    "2월": 0.0,
+    "3월": 13.6,
+    "4월": 38.2,
+    "5월": 38.4,
+    "6월": -15.2
+   }
+  },
+  {
+   "name": "윤성하",
+   "cat": "여성",
+   "role": "AMD",
+   "role_label": "AMD(여성)",
+   "labor6": 33.394,
+   "pay_m": 5.565668766666667,
+   "old6": 21.800000000000004,
+   "old7": 23.300000000000004,
+   "old_months": {
+    "1월": 0.0,
+    "2월": 0.0,
+    "3월": 2.0,
+    "4월": 19.3,
+    "5월": 20.4,
+    "6월": -19.9
+   }
+  },
+  {
+   "name": "한정훈",
+   "cat": "남성",
+   "role": "MD",
+   "role_label": "MD(남성)",
+   "labor6": 38.198,
+   "pay_m": 6.36629341666667,
+   "old6": 195.5,
+   "old7": 226.7,
+   "old_months": {
+    "1월": 0.0,
+    "2월": 0.0,
+    "3월": 34.4,
+    "4월": 87.9,
+    "5월": 82.6,
+    "6월": -9.4
+   }
+  },
+  {
+   "name": "김영환",
+   "cat": "남성",
+   "role": "AMD",
+   "role_label": "AMD(남성)",
+   "labor6": 33.394,
+   "pay_m": 5.565668766666667,
+   "old6": 29.9,
+   "old7": 33.5,
+   "old_months": {
+    "1월": 0.0,
+    "2월": 0.0,
+    "3월": 5.0,
+    "4월": 24.1,
+    "5월": 23.7,
+    "6월": -22.9
+   }
+  },
+  {
+   "name": "김보준",
+   "cat": "남성",
+   "role": "AMD",
+   "role_label": "AMD(남성)",
+   "labor6": 33.394,
+   "pay_m": 5.565668766666667,
+   "old6": 11.5,
+   "old7": 11.5,
+   "old_months": {
+    "1월": 0.0,
+    "2월": 0.8,
+    "3월": 1.0,
+    "4월": 9.7,
+    "5월": 0.0,
+    "6월": 0.0
+   }
+  },
+  {
+   "name": "조한익",
+   "cat": "아동",
+   "role": "MD",
+   "role_label": "MD(아동)",
+   "labor6": 49.43,
+   "pay_m": 8.238366716666668,
+   "old6": 147.1,
+   "old7": 184.2,
+   "old_months": {
+    "1월": 0.0,
+    "2월": 0.0,
+    "3월": 5.9,
+    "4월": 61.6,
+    "5월": 66.6,
+    "6월": 13.0
+   }
+  },
+  {
+   "name": "최지은",
+   "cat": "아동",
+   "role": "MD",
+   "role_label": "MD(아동)",
+   "labor6": 41.877,
+   "pay_m": 6.979417358333333,
+   "old6": -12.200000000000001,
+   "old7": -12.200000000000001,
+   "old_months": {
+    "1월": -5.0,
+    "2월": -1.7,
+    "3월": -4.6,
+    "4월": -2.2,
+    "5월": 1.2,
+    "6월": 0.1
+   }
+  },
+  {
+   "name": "정해현",
+   "cat": "아동",
+   "role": "AMD",
+   "role_label": "AMD(아동)",
+   "labor6": 33.394,
+   "pay_m": 5.565668766666667,
+   "old6": -5.399999999999999,
+   "old7": -9.999999999999998,
+   "old_months": {
+    "1월": 0.0,
+    "2월": 0.0,
+    "3월": 5.8,
+    "4월": 8.8,
+    "5월": 12.6,
+    "6월": -32.6
+   }
+  },
+  {
+   "name": "지연홍",
+   "cat": "잡화",
+   "role": "MD",
+   "role_label": "MD(잡화)",
+   "labor6": 49.43,
+   "pay_m": 8.238366716666668,
+   "old6": -40.0,
+   "old7": -54.4,
+   "old_months": {
+    "1월": 5.0,
+    "2월": 1.4,
+    "3월": -12.1,
+    "4월": 0.0,
+    "5월": 0.0,
+    "6월": -34.3
+   }
+  }
+ ],
+ "sales": [
+  {
+   "name": "정수만",
+   "role": "영업",
+   "direct": "강서점",
+   "direct_plant": "8227",
+   "labor6": 41.877,
+   "pay_m": 6.979417358333333,
+   "target": 2900.0,
+   "sales": 2486.8,
+   "area": 201.0,
+   "old6": 205.0,
+   "old7": 96.8,
+   "old_months": {
+    "1월": 0.0,
+    "2월": 0.0,
+    "3월": 93.0,
+    "4월": 50.1,
+    "5월": 48.6,
+    "6월": 13.3
+   },
+   "months": 6.0,
+   "sales_direct": 2464.6
+  },
+  {
+   "name": "최지선",
+   "role": "영업",
+   "direct": "송파점",
+   "direct_plant": "8224",
+   "labor6": 41.192,
+   "pay_m": 8.238366716666668,
+   "target": 2000.0,
+   "sales": 2000.9,
+   "area": 132.0,
+   "old6": 64.6,
+   "old7": 76.39999999999999,
+   "old_months": {
+    "1월": 15.8,
+    "2월": 10.2,
+    "3월": 25.3,
+    "4월": 0.0,
+    "5월": 0.0,
+    "6월": 13.3
+   },
+   "months": 5.0,
+   "sales_direct": 1576.2
+  },
+  {
+   "name": "최태영",
+   "role": "영업",
+   "direct": "분당점",
+   "direct_plant": "7209",
+   "labor6": 38.198,
+   "pay_m": 6.36629341666667,
+   "target": 1355.0,
+   "sales": 1877.3,
+   "area": 79.0,
+   "old6": 131.0,
+   "old7": 142.8,
+   "old_months": {
+    "1월": 0.0,
+    "2월": 0.0,
+    "3월": 20.7,
+    "4월": 48.1,
+    "5월": 48.9,
+    "6월": 13.3
+   },
+   "months": 6.0,
+   "sales_direct": 1248.6
+  }
+ ],
+ "plants": [
+  {
+   "key": "7204(중간관리)",
+   "code": "7204",
+   "name": "중계",
+   "type": "중간관리",
+   "sales": 267.717,
+   "sga": 153.08,
+   "loss": 1.158,
+   "hq": 23.85,
+   "owner": "최태영"
+  },
+  {
+   "key": "7209",
+   "code": "7209",
+   "name": "분당",
+   "type": "직영",
+   "sales": 1128.048,
+   "sga": 393.141,
+   "loss": 26.243,
+   "hq": 111.158,
+   "owner": "최태영"
+  },
+  {
+   "key": "7209(중간관리)",
+   "code": "7209",
+   "name": "분당 키즈",
+   "type": "중간관리",
+   "sales": 560.085,
+   "sga": 392.603,
+   "loss": 0.0,
+   "hq": 49.896,
+   "owner": "최태영"
+  },
+  {
+   "key": "7214(그외)",
+   "code": "7214",
+   "name": "해운대",
+   "type": "그외",
+   "sales": 21.747,
+   "sga": 34.798,
+   "loss": 3.951,
+   "hq": 5.153,
+   "owner": ""
+  },
+  {
+   "key": "7215",
+   "code": "7215",
+   "name": "천호2",
+   "type": "직영",
+   "sales": 1381.459,
+   "sga": 551.061,
+   "loss": 19.886,
+   "hq": 111.514,
+   "owner": "최지선"
+  },
+  {
+   "key": "7215(중간관리)",
+   "code": "7215",
+   "name": "천호2 키즈",
+   "type": "중간관리",
+   "sales": 186.951,
+   "sga": 78.42,
+   "loss": 0.0,
+   "hq": 16.655,
+   "owner": "최태영"
+  },
+  {
+   "key": "7217",
+   "code": "7217",
+   "name": "불광",
+   "type": "직영",
+   "sales": 486.597,
+   "sga": 205.89,
+   "loss": 1.373,
+   "hq": 31.615,
+   "owner": "최지선"
+  },
+  {
+   "key": "8201(중간관리)",
+   "code": "8201",
+   "name": "일산",
+   "type": "중간관리",
+   "sales": 205.109,
+   "sga": 105.059,
+   "loss": 1.151,
+   "hq": 18.272,
+   "owner": "최태영"
+  },
+  {
+   "key": "8205(중간관리)",
+   "code": "8205",
+   "name": "평촌2",
+   "type": "중간관리",
+   "sales": 589.334,
+   "sga": 245.849,
+   "loss": 1.577,
+   "hq": 52.502,
+   "owner": "최태영"
+  },
+  {
+   "key": "8206",
+   "code": "8206",
+   "name": "강남",
+   "type": "직영",
+   "sales": 1001.64,
+   "sga": 421.792,
+   "loss": 23.813,
+   "hq": 81.849,
+   "owner": "최지선"
+  },
+  {
+   "key": "8206(중간관리)",
+   "code": "8206",
+   "name": "강남 키즈",
+   "type": "중간관리",
+   "sales": 97.214,
+   "sga": 49.438,
+   "loss": 0.0,
+   "hq": 8.66,
+   "owner": "최태영"
+  },
+  {
+   "key": "8208",
+   "code": "8208",
+   "name": "동수원",
+   "type": "직영",
+   "sales": 577.177,
+   "sga": 230.807,
+   "loss": 19.376,
+   "hq": 37.265,
+   "owner": "최지선"
+  },
+  {
+   "key": "8212(그외)",
+   "code": "8212",
+   "name": "순천",
+   "type": "그외",
+   "sales": 285.211,
+   "sga": 107.256,
+   "loss": 2.111,
+   "hq": 23.202,
+   "owner": ""
+  },
+  {
+   "key": "8215(그외)",
+   "code": "8215",
+   "name": "산본",
+   "type": "그외",
+   "sales": 292.251,
+   "sga": 126.054,
+   "loss": 2.146,
+   "hq": 21.249,
+   "owner": ""
+  },
+  {
+   "key": "8217",
+   "code": "8217",
+   "name": "광명",
+   "type": "직영",
+   "sales": 707.896,
+   "sga": 197.958,
+   "loss": 51.711,
+   "hq": 76.004,
+   "owner": "최지선"
+  },
+  {
+   "key": "8217(그외)",
+   "code": "8217",
+   "name": "광명 뉴발란스",
+   "type": "그외",
+   "sales": 507.429,
+   "sga": 111.864,
+   "loss": 0.0,
+   "hq": 76.004,
+   "owner": ""
+  },
+  {
+   "key": "8219(중간관리)",
+   "code": "8219",
+   "name": "울산2",
+   "type": "중간관리",
+   "sales": 102.681,
+   "sga": 46.255,
+   "loss": 1.478,
+   "hq": 9.148,
+   "owner": "최태영"
+  },
+  {
+   "key": "8220(중간관리)",
+   "code": "8220",
+   "name": "창원",
+   "type": "중간관리",
+   "sales": 116.533,
+   "sga": 60.668,
+   "loss": 0.256,
+   "hq": 10.381,
+   "owner": "최태영"
+  },
+  {
+   "key": "8222(중간관리)",
+   "code": "8222",
+   "name": "부천",
+   "type": "중간관리",
+   "sales": 203.5,
+   "sga": 106.637,
+   "loss": 4.152,
+   "hq": 18.129,
+   "owner": "최태영"
+  },
+  {
+   "key": "8224",
+   "code": "8224",
+   "name": "송파",
+   "type": "직영",
+   "sales": 1425.851,
+   "sga": 610.937,
+   "loss": 15.151,
+   "hq": 134.043,
+   "owner": "최지선"
+  },
+  {
+   "key": "8224(중간관리)",
+   "code": "8224",
+   "name": "송파 키즈",
+   "type": "중간관리",
+   "sales": 385.394,
+   "sga": 206.617,
+   "loss": 0.0,
+   "hq": 34.333,
+   "owner": "최태영"
+  },
+  {
+   "key": "8227",
+   "code": "8227",
+   "name": "강서",
+   "type": "직영",
+   "sales": 2244.109,
+   "sga": 1097.116,
+   "loss": 83.233,
+   "hq": 185.559,
+   "owner": "정수만"
+  },
+  {
+   "key": "8229(중간관리)",
+   "code": "8229",
+   "name": "부산대",
+   "type": "중간관리",
+   "sales": 73.002,
+   "sga": 48.254,
+   "loss": 0.157,
+   "hq": 6.503,
+   "owner": "최태영"
+  },
+  {
+   "key": "8231(그외)",
+   "code": "8231",
+   "name": "엑스코(폐점)",
+   "type": "그외",
+   "sales": 253.235,
+   "sga": 140.165,
+   "loss": 9.926,
+   "hq": 21.484,
+   "owner": ""
+  },
+  {
+   "key": "8235(중간관리)",
+   "code": "8235",
+   "name": "중앙로역",
+   "type": "중간관리",
+   "sales": 326.81,
+   "sga": 164.937,
+   "loss": 2.805,
+   "hq": 29.114,
+   "owner": "최태영"
+  },
+  {
+   "key": "8237",
+   "code": "8237",
+   "name": "수원터미널",
+   "type": "직영",
+   "sales": 362.784,
+   "sga": 157.209,
+   "loss": 3.24,
+   "hq": 33.643,
+   "owner": "최지선"
+  },
+  {
+   "key": "8237(중간관리)",
+   "code": "8237",
+   "name": "수원터미널 키즈",
+   "type": "중간관리",
+   "sales": 120.524,
+   "sga": 71.133,
+   "loss": 0.0,
+   "hq": 10.737,
+   "owner": "최태영"
+  },
+  {
+   "key": "8242(중간관리)",
+   "code": "8242",
+   "name": "신구로",
+   "type": "중간관리",
+   "sales": 368.344,
+   "sga": 180.265,
+   "loss": 1.61,
+   "hq": 32.814,
+   "owner": "최태영"
+  },
+  {
+   "key": "8243(중간관리)",
+   "code": "8243",
+   "name": "NC대전유성",
+   "type": "중간관리",
+   "sales": 415.119,
+   "sga": 227.503,
+   "loss": 6.172,
+   "hq": 36.981,
+   "owner": "최태영"
+  },
+  {
+   "key": "8501(중간관리)",
+   "code": "8501",
+   "name": "쇼핑",
+   "type": "중간관리",
+   "sales": 265.44,
+   "sga": 134.053,
+   "loss": 5.509,
+   "hq": 23.647,
+   "owner": "최태영"
+  },
+  {
+   "key": "8502(중간관리)",
+   "code": "8502",
+   "name": "수성",
+   "type": "중간관리",
+   "sales": 354.663,
+   "sga": 178.335,
+   "loss": 15.121,
+   "hq": 31.596,
+   "owner": "최태영"
+  },
+  {
+   "key": "8504(그외)",
+   "code": "8504",
+   "name": "강북",
+   "type": "그외",
+   "sales": 6.115,
+   "sga": 6.261,
+   "loss": 0,
+   "hq": 0.902,
+   "owner": ""
+  }
+ ],
+ "reversal": 3200.172,
+ "hq_total": 1364.065626,
+ "company_oi": 1416.76,
+ "company_sales": 15700.69,
+ "company_cost": 7921.397,
+ "company_sga": 6160.77,
+ "leaders": [
+  {
+   "name": "김귀현",
+   "role": "CD장",
+   "pay_m": 10.355380208333335,
+   "base": "회사 영업이익",
+   "old6": -40.69999999999999,
+   "old7": 72.60000000000001
+  },
+  {
+   "name": "오광묵",
+   "role": "MD장(상품 부문장)",
+   "pay_m": 8.238366716666668,
+   "base": "MD 조직 남은돈",
+   "old6": 155.10000000000002,
+   "old7": -3.099999999999966,
+   "months": 4.0
+  },
+  {
+   "name": "정수만",
+   "role": "영업 팀장",
+   "pay_m": 6.979417358333333,
+   "base": "영업 조직 남은돈",
+   "old6": 205.0,
+   "old7": 96.8
+  }
+ ],
+ "notes": {
+  "source": "이재선 OPR_E머니_버전업.xlsx 세부실적(AMIS CU_실적 1~6월)·마이너스재고액·직접비레포트 / 회사 OPR_전직원E머니현황판_7월누적 / 매출 대시보드 DB(월목표·평수)",
+  "category": "카테고리 = MC 셀 기준(회사 4셀 규칙, DB daily_sales 1~6월). 매출은 DB 순매출 15,807을 AMIS 매출액 15,701에, 원가는 DB 원가(평가감 전) 11,470을 AMIS 매출원가 7,921(평가감 순환입 3,200 포함)에 셀 비중대로 맞춤. 로스 304.5은 셀 원가 비중 배분",
+  "stores": "매출이 발생하는 모든 매장 포함(본사 1000·물류 1101 제외): 직영 9 · 중간관리 19 · 그외 6(그외 = 순천·산본·강북 + 광명 뉴발란스·엑스코(폐점)·해운대. 매출 0에 비용만 남은 플랜트는 제외). 로스는 마이너스재고액이 있는 매장 전부에 매장 책임으로 부과(합 303.3), 중간관리 본부배분 = 1,364 − 직영·그외 배분분(매출 비중 안분)"
+ },
+ "cats_pg": {
+  "여성": {
+   "sales": 5174.757,
+   "cost": 2678.96,
+   "gm": 2410.302,
+   "sga": 2141.646,
+   "loss": 77.435
+  },
+  "남성": {
+   "sales": 6309.353,
+   "cost": 2953.262,
+   "gm": 3318.885,
+   "sga": 2814.632,
+   "loss": 141.262
+  },
+  "아동": {
+   "sales": 2956.24,
+   "cost": 1582.333,
+   "gm": 1373.907,
+   "sga": 1619.036,
+   "loss": 38.826
+  },
+  "잡화": {
+   "sales": 511.751,
+   "cost": 263.105,
+   "gm": 248.646,
+   "sga": 336.889,
+   "loss": 26.954
+  },
+  "혼합": {
+   "sales": 748.59,
+   "cost": 443.639,
+   "gm": 225.89,
+   "sga": 334.327,
+   "loss": 20.004
+  }
+ },
+ "cat_basis": "MC셀"
+}</script>
+<script id="calc">
+function compute(D, P){
+  const r = P.r/100, ms = P.ms/100, ss = P.ss/100, mp = P.mp/100;
+  const cats = {}; const md = [];
+  for (const c of ["여성","남성","아동","잡화"]){
+    const x = D.cats[c]; const ppl = D.md.filter(m=>m.cat===c);
+    const mds = ppl.filter(m=>m.role==="MD"), amds = ppl.filter(m=>m.role==="AMD");
+    const earn = x.sales*r, contrib = earn - x.cost + x.loss, labor = ppl.reduce((a,m)=>a+m.labor6,0);
+    const left = contrib - labor;
+    const mdPool = contrib*(amds.length? ms : 1), amdPool = contrib - mdPool;
+    for (const m of mds){ const w = (amds.length? ms : 1)/mds.length; md.push({...m, share: mdPool/mds.length, earnP: earn*w, costP: (x.cost - x.loss)*w, spentP: (x.cost - x.loss)*w + m.labor6, left: mdPool/mds.length - m.labor6}); }
+    for (const m of amds){ const w = (1-ms)/amds.length; md.push({...m, share: amdPool/amds.length, earnP: earn*w, costP: (x.cost - x.loss)*w, spentP: (x.cost - x.loss)*w + m.labor6, left: amdPool/amds.length - m.labor6}); }
+    cats[c] = {sales:x.sales, cost:x.cost, loss:x.loss, earn, contrib, labor, left, costRate: x.cost/x.sales, beRate: (x.cost - x.loss + labor)/x.sales};
+  }
+  const mdOrg = Object.values(cats).reduce((a,v)=>a+v.left,0);
+  const plants = D.plants.map(p=>{ const earn=p.sales*(1-r), spent=p.sga+p.loss-p.hq, left=earn-spent; return {...p, earn, spent, left, storeShare:left*(1-ss), managerShare:left*(1-ss)*mp}; });
+  const storeTotal = plants.reduce((a,p)=>a+p.left,0);
+  const direct = plants.filter(p=>p.type==="직영").reduce((a,p)=>a+p.left,0), mid = plants.filter(p=>p.type==="중간관리").reduce((a,p)=>a+p.left,0), other = plants.filter(p=>p.type==="그외").reduce((a,p)=>a+p.left,0);
+  const pool = storeTotal*ss; const storeEarn = plants.reduce((a,p)=>a+p.earn,0), storeSpent = plants.reduce((a,p)=>a+p.spent,0);
+  let w = D.sales.map(s=> P.wm==="ach" ? s.sales/s.target : P.wm==="ppy" ? s.sales_direct/s.area/D.days : 1);
+  const wsum = w.reduce((a,b)=>a+b,0); w = w.map(v=>v/wsum*D.sales.length);
+  const sales = D.sales.map((s,i)=>{ const k = ss*w[i]/D.sales.length; return {...s, weight:w[i], ach:s.sales/s.target, ppy:s.sales_direct/s.area/D.days, share: pool*w[i]/D.sales.length, earnP: storeEarn*k, costP: storeSpent*k, spentP: storeSpent*k + s.labor6, left: pool*w[i]/D.sales.length - s.labor6}; });
+  const salesSum = sales.reduce((a,s)=>a+s.left,0), mdSum = md.reduce((a,m)=>a+m.left,0);
+  const leaders = D.leaders.map(L=>{
+    const months = L.months || 6; const rate = (L.name==="김귀현"? P.lr_cd : L.name==="오광묵"? P.lr_md : P.lr_sl)/100;
+    const base = L.name==="김귀현"? D.company_oi : L.name==="오광묵"? mdOrg : storeTotal;
+    const earn = Math.max(base,0)*rate, spent = L.pay_m*months*P.lmult; const left = earn-spent; let extra = 0;
+    if (L.name==="정수만" && P.dual){ const s = sales.find(x=>x.name==="정수만"); extra = s? s.left : 0; }
+    return {...L, base, rate, earn, spent, left, extra, total: left+extra};
+  });
+  const storeShareTotal = storeTotal*(1-ss);
+  const companyResidual = D.company_oi - mdSum - salesSum - storeShareTotal;
+  return {cats, md, mdOrg, mdSum, plants, storeTotal, direct, mid, other, pool, sales, salesSum, leaders, storeShareTotal, companyResidual};
+}
+</script>
+<script>
+const D = JSON.parse(document.getElementById('data').textContent);
+const $ = id => document.getElementById(id);
+const OPEN = new Set();
+const TG = (id) => `<button class="tg" data-t="${id}">내역 ${OPEN.has(id)?'▾':'▸'}</button>`;
+const DEF = {r:60, ms:70, ss:50, wm:"ach", mp:30, lr_cd:10, lr_md:5, lr_sl:5, lmult:3.5, dual:true};
+const clamp = (v,lo,hi) => Math.min(hi, Math.max(lo, isFinite(v)? v : lo));
+function params(){ return {r:clamp(+$('r').value,0,100), ms:clamp(+$('ms').value,0,100), ss:clamp(+$('ss').value,0,100), wm:$('wm').value, mp:clamp(+$('mp').value,0,100), lr_cd:+$('lr_cd').value||0, lr_md:+$('lr_md').value||0, lr_sl:+$('lr_sl').value||0, lmult:+$('lmult').value||0, dual:$('dual').checked}; }
+const f0 = v => v==null? "-" : (Math.round(v)).toLocaleString('ko-KR');
+const pct = v => (v*100).toFixed(1)+"%";
+const cls = v => v<0? 'neg' : 'pos';
+function td(v,c){ return `<td class="${c||cls(v)}">${f0(v)}</td>`; }
+function render(){
+  const P = params(); const R = compute(D,P);
+  $('rv').textContent = `MD ${P.r} : 영업 ${100-P.r}`; $('msv').textContent = `MD ${P.ms} : AMD ${100-P.ms}`; $('ssv').textContent = `본부 ${P.ss} : 매장 ${100-P.ss}`;
+  const mdPos = R.md.filter(m=>m.left>0).length, slPos = R.sales.filter(s=>s.left>0).length;
+  const oldMd = R.md.filter(m=>m.old6>0).length, oldSl = R.sales.filter(s=>s.old6>0).length;
+  $('cards').innerHTML = [
+    ["MD 흑자 인원", `${mdPos} / 9`, `기존 ${oldMd} / 9`],
+    ["MD 9명 합", f0(R.mdSum), `기존 ${f0(R.md.reduce((a,m)=>a+m.old6,0))}`],
+    ["영업 흑자 인원", `${slPos} / 3`, `기존 ${oldSl} / 3`],
+    ["영업 3명 합", f0(R.salesSum), `기존 ${f0(R.sales.reduce((a,s)=>a+s.old6,0))}`],
+    ["전체 매장 남은돈", f0(R.storeTotal), `직영 ${f0(R.direct)} · 중간관리 ${f0(R.mid)} · 그외 ${f0(R.other)}`],
+    ["매장(점장·직원) 몫", f0(R.storeShareTotal), `본부 영업 몫 ${f0(R.pool)}`],
+    ["회사 몫(잔여)", f0(R.companyResidual), `영업이익 ${f0(D.company_oi)} − 사람 몫`],
+  ].map(([k,v,s])=>`<div class="card"><div class="k">${k}</div><div class="v ${String(v).startsWith('-')?'neg':''}">${v}</div><div class="s">${s}</div></div>`).join('');
+  let h = `<tr><th>이름</th><th>역할</th><th>카테고리/담당</th><th>번돈</th><th>쓴돈 ${TG('tPeople')}</th><th>남은돈 (새 로직)</th><th class="muted det">원가·매장비용 몫</th><th class="muted det">인건비</th><th>기존 6월누적</th><th>차이</th></tr>`;
+  for (const m of R.md) h += `<tr><td class="l">${m.name}</td><td class="l">${m.role}</td><td class="l">${m.cat}</td>${td(m.earnP,'')}${td(-m.spentP,'muted')}${td(m.left)}${td(-m.costP,'muted det')}${td(-m.labor6,'muted det')}${td(m.old6,'muted')}${td(m.left-m.old6)}</tr>`;
+  for (const s of R.sales) h += `<tr><td class="l">${s.name}</td><td class="l">영업</td><td class="l">${s.direct}<span class="pill">가중 ${s.weight.toFixed(2)}</span></td>${td(s.earnP,'')}${td(-s.spentP,'muted')}${td(s.left)}${td(-s.costP,'muted det')}${td(-s.labor6,'muted det')}${td(s.old6,'muted')}${td(s.left-s.old6)}</tr>`;
+  const oldSum = [...R.md,...R.sales].reduce((a,x)=>a+x.old6,0), newSum = R.mdSum+R.salesSum;
+  h += `<tr class="sum"><td class="l" colspan="3">12명 합</td>${td([...R.md,...R.sales].reduce((a,x)=>a+x.earnP,0),'')}${td(-[...R.md,...R.sales].reduce((a,x)=>a+x.spentP,0),'muted')}${td(newSum)}${td(-[...R.md,...R.sales].reduce((a,x)=>a+x.costP,0),'muted det')}${td(-[...R.md,...R.sales].reduce((a,x)=>a+x.labor6,0),'muted det')}${td(oldSum,'muted')}${td(newSum-oldSum)}</tr>`;
+  $('tPeople').innerHTML = h;
+  h = `<tr><th>카테고리</th><th>매출</th><th>번돈</th><th>쓴돈 ${TG('tCat')}</th><th>남은돈</th><th class="muted det">원가(평가감 포함)</th><th class="muted det">로스(매장 귀속, 차감)</th><th class="muted det">인건비</th><th>원가율</th><th>손익분기 MD 비율</th></tr>`;
+  for (const [c,v] of Object.entries(R.cats)) h += `<tr><td class="l">${c}</td>${td(v.sales,'')}${td(v.earn,'')}${td(-(v.cost - v.loss + v.labor),'muted')}${td(v.left)}${td(v.cost,'muted det')}${td(-v.loss,'muted det')}${td(v.labor,'muted det')}<td>${pct(v.costRate)}</td><td>${pct(v.beRate)}</td></tr>`;
+  { const S = Object.values(R.cats); const e=S.reduce((a,v)=>a+v.earn,0), sp=S.reduce((a,v)=>a+v.cost-v.loss+v.labor,0);
+    h += `<tr class="sum"><td class="l">MD 조직 합</td>${td(S.reduce((a,v)=>a+v.sales,0),'')}${td(e,'')}${td(-sp,'muted')}${td(R.mdOrg)}${td(S.reduce((a,v)=>a+v.cost,0),'muted det')}${td(-S.reduce((a,v)=>a+v.loss,0),'muted det')}${td(S.reduce((a,v)=>a+v.labor,0),'muted det')}<td></td><td></td></tr>`; }
+  $('tCat').innerHTML = h;
+  h = `<tr><th>이름</th><th>직접하기 매장</th><th>번돈</th><th>쓴돈 ${TG('tSales')}</th><th>남은돈</th><th class="muted det">매장 비용 몫</th><th class="muted det">인건비(개월)</th><th class="muted">가중치</th><th class="muted">달성률</th><th class="muted">평당매출(원/평/일, 아동 제외)</th><th class="muted">매출(외형)</th><th class="muted">목표</th><th class="muted">평수</th></tr>`;
+  for (const s of R.sales) h += `<tr><td class="l">${s.name}</td><td class="l">${s.direct}</td>${td(s.earnP,'')}${td(-s.spentP,'muted')}${td(s.left)}${td(s.spentP - s.labor6,'muted det')}<td class="muted det">${f0(s.labor6)} (${s.months}개월)</td><td class="muted">${s.weight.toFixed(2)}</td><td class="muted">${pct(s.ach)}</td><td class="muted">${Math.round(s.ppy*1e6).toLocaleString()}</td>${td(s.sales,'muted')}${td(s.target,'muted')}<td class="muted">${s.area}</td></tr>`;
+  h += `<tr class="sum"><td class="l" colspan="2">영업 3명 합</td>${td(R.sales.reduce((a,s)=>a+s.earnP,0),'')}${td(-R.sales.reduce((a,s)=>a+s.spentP,0),'muted')}${td(R.salesSum)}<td colspan="2" class="det"></td><td colspan="6"></td></tr>`;
+  $('tSales').innerHTML = h;
+  $('salesNote').textContent = `본부 영업 재원 ${f0(R.pool)} = 전체 매장 남은돈 ${f0(R.storeTotal)} × 본부 영업 몫 ${P.ss}%  →  3명이 가중치대로 나눈 뒤 각자 인건비 차감`;
+  h = `<tr><th>플랜트</th><th>매장</th><th>형태</th><th>매출</th><th>번돈</th><th>쓴돈 ${TG('tPlant')}</th><th>남은돈</th><th class="muted det">판관비</th><th class="muted det">로스</th><th class="muted det">본부배분(차감)</th><th>매장 몫(${100-P.ss}%)</th><th>점장 몫(${P.mp}%)</th></tr>`;
+  const ORD={직영:0,중간관리:1,그외:2}; for (const p of [...R.plants].sort((a,b)=> a.type===b.type ? b.sales-a.sales : ORD[a.type]-ORD[b.type])) h += `<tr><td class="l">${p.code}</td><td class="l">${p.name}</td><td class="l">${p.type}</td>${td(p.sales,'')}${td(p.earn,'')}${td(-p.spent,'muted')}${td(p.left)}${td(p.sga,'muted det')}${td(p.loss,'muted det')}${td(-p.hq,'muted det')}${td(p.storeShare)}${td(p.managerShare)}</tr>`;
+  for (const [t_,v_] of [["직영",R.direct],["중간관리",R.mid],["그외",R.other]]) { const ps=R.plants.filter(p=>p.type===t_); h += `<tr class="sum"><td class="l" colspan="3">${t_} 소계 (${ps.length}곳)</td>${td(ps.reduce((a,p)=>a+p.sales,0),'')}${td(ps.reduce((a,p)=>a+p.earn,0),'')}${td(-ps.reduce((a,p)=>a+p.spent,0),'muted')}${td(v_)}<td colspan="3" class="det"></td>${td(v_*(1-P.ss/100))}<td></td></tr>`; }
+  h += `<tr class="sum"><td class="l" colspan="3">전체 매장 합</td>${td(R.plants.reduce((a,p)=>a+p.sales,0),'')}${td(R.plants.reduce((a,p)=>a+p.earn,0),'')}${td(-R.plants.reduce((a,p)=>a+p.spent,0),'muted')}${td(R.storeTotal)}<td colspan="3" class="det"></td>${td(R.storeShareTotal)}<td></td></tr>`;
+  $('tPlant').innerHTML = h;
+  h = `<tr><th>이름</th><th>역할</th><th>기준</th><th>기준 금액</th><th>요율</th><th>번돈</th><th>쓴돈(급여×${P.lmult})</th><th>책임자 몫</th><th>실무 몫</th><th>합계</th><th>기존 6월누적</th></tr>`;
+  for (const L of R.leaders) h += `<tr><td class="l">${L.name}</td><td class="l">${L.role}</td><td class="l">${L.name==='김귀현'?'회사 영업이익':L.name==='오광묵'?'MD 조직 남은돈':'영업 조직(전체 매장) 남은돈'}</td>${td(L.base,'')}<td>${(L.rate*100).toFixed(1)}%</td>${td(L.earn,'')}${td(-L.spent,'muted')}${td(L.left)}${td(L.extra)}${td(L.total)}${td(L.old6,'muted')}</tr>`;
+  $('tLead').innerHTML = h;
+  for (const id of ['tPeople','tCat','tSales','tPlant']) $(id).classList.toggle('show-det', OPEN.has(id));
+  document.querySelectorAll('button.tg').forEach(b=>b.addEventListener('click',()=>{ const id=b.dataset.t; OPEN.has(id)? OPEN.delete(id) : OPEN.add(id); render(); }));
+  $('notes').innerHTML = `<b>확정</b>: 평가감 전입·환입 MD 귀속(원가에 순환입 ${f0(D.reversal)} 포함) · 매장 로스는 매장 책임 · 인건비는 각자 표준 인건비(현황판 무게값 × 근무월수), 표준-실비 차이는 회사 몫 · MD/AMD는 공헌 고정 비율 구조 · 영업 번돈은 매출이 있는 전체 매장(직영·중간관리·그외) 기준 · 본사·물류·폐점 손익은 회사 몫 · 정판율·평당매출은 별도 지표로 안 넣음 · 책임자 3명은 그룹 기준 별도 공식.<br>
+<b>식</b>: MD 번돈 = 카테고리 매출 × MD 비율, 공헌 = 번돈 − 원가 + 로스, 공헌을 MD:AMD로 나눈 뒤(여럿이면 균등) 각자 인건비 차감. 영업: 점 번돈 = 점 매출 × 영업 비율, 점 남은돈 = 번돈 − 판관비 − 로스 + 본부배분(중간관리는 1,364 − 직영 합을 매출 비중 안분). 본부 영업 3명 = 전체 매장 남은돈 × 몫 % × 가중치/3 − 인건비. 달성률 = 직접하기 점 전체 매출 ÷ 월목표 합, 평당매출 = 아동 구매그룹 제외 외형 ÷ 평수 ÷ 181일.<br>
+<b>원천</b>: ${D.notes.source}.<br><b>카테고리</b>: ${D.notes.category}. ${D.notes.stores}.<br>
+<b>회사 몫(잔여)</b> = 회사 영업이익 ${f0(D.company_oi)} − MD 9명 − 영업 3명 − 매장 몫. 본사·물류·폐점 손익·인건비 표준-실비 차이 포함. 검증: 50:50·본사 인건비 전체 조건에서 이재선 시트 값 재현.`;
+}
+['r','ms','ss','mp','lr_cd','lr_md','lr_sl','lmult'].forEach(id=>$(id).addEventListener('input',render));
+['wm','dual'].forEach(id=>$(id).addEventListener('change',render));
+document.querySelectorAll('button[data-r]').forEach(b=>b.addEventListener('click',()=>{ $('r').value=b.dataset.r; render(); }));
+$('applyTc').addEventListener('click',()=>{ $('r').value=Math.round(clamp(+$('tc').value + +$('tm').value,0,100)); render(); });
+$('reset').addEventListener('click',()=>{ for (const [k,v] of Object.entries(DEF)){ if(k==='dual') $(k).checked=v; else $(k).value=v; } $('tc').value=35; $('tm').value=10; render(); });
+
+function toRows(R, P){
+  const S = {};
+  S['비율'] = [["항목","값"],["MD 매출 비율 %",P.r],["영업 매출 비율 %",100-P.r],["목표 원가율 %",+$('tc').value],["가산 %p",+$('tm').value],["MD:AMD 공헌 분배 (MD %)",P.ms],["본부 영업 3명 몫 %",P.ss],["3명 간 가중",{equal:"균등",ach:"목표 달성률",ppy:"평당매출"}[P.wm]],["점장 몫 %",P.mp],["CD장 요율 %",P.lr_cd],["MD장 요율 %",P.lr_md],["영업 팀장 요율 %",P.lr_sl],["책임자 쓴돈 급여 배수",P.lmult],["정수만 실무 몫 포함",P.dual?"Y":"N"],["기간",D.period],["단위",D.unit]];
+  const r1 = [["이름","역할","카테고리/담당","번돈","쓴돈","남은돈(새 로직)","쓴돈 내역: 원가·매장비용 몫","인건비","기존 6월누적","차이"]];
+  for (const m of R.md) r1.push([m.name,m.role,m.cat,m.earnP,-m.spentP,m.left,-m.costP,-m.labor6,m.old6,m.left-m.old6]);
+  for (const s of R.sales) r1.push([s.name,"영업",s.direct+" (가중 "+s.weight.toFixed(2)+")",s.earnP,-s.spentP,s.left,-s.costP,-s.labor6,s.old6,s.left-s.old6]);
+  S['사람별'] = r1;
+  const r2 = [["카테고리","매출","번돈","쓴돈","남은돈","원가(평가감 포함)","로스(매장 귀속, 차감)","인건비","원가율","손익분기 MD 비율"]];
+  for (const [c,v] of Object.entries(R.cats)) r2.push([c,v.sales,v.earn,-(v.cost-v.loss+v.labor),v.left,v.cost,-v.loss,v.labor,v.costRate,v.beRate]);
+  S['카테고리'] = r2;
+  const r3 = [["이름","직접하기 매장","번돈","쓴돈","남은돈","매장 비용 몫","인건비","근무월수","가중치","달성률","평당매출(원/평/일)","매출(외형)","목표","평수"]];
+  for (const s of R.sales) r3.push([s.name,s.direct,s.earnP,-s.spentP,s.left,-s.costP,-s.labor6,s.months,s.weight,s.ach,Math.round(s.ppy*1e6),s.sales,s.target,s.area]);
+  r3.push(["본부 영업 재원",R.pool,"= 전체 매장 남은돈",R.storeTotal,"× 몫 %",P.ss]);
+  S['영업 3명'] = r3;
+  const r4 = [["플랜트","매장","형태","매출","번돈","쓴돈","남은돈","판관비","로스","본부배분(차감)","매장 몫","점장 몫"]];
+  const ORD={직영:0,중간관리:1,그외:2};
+  for (const p of [...R.plants].sort((a,b)=> a.type===b.type ? b.sales-a.sales : ORD[a.type]-ORD[b.type])) r4.push([p.code,p.name,p.type,p.sales,p.earn,-p.spent,p.left,p.sga,p.loss,-p.hq,p.storeShare,p.managerShare]);
+  S['매장별'] = r4;
+  const r5 = [["이름","역할","기준","기준 금액","요율","번돈","쓴돈","책임자 몫","실무 몫","합계","기존 6월누적"]];
+  for (const L of R.leaders) r5.push([L.name,L.role,L.name==='김귀현'?'회사 영업이익':L.name==='오광묵'?'MD 조직 남은돈':'영업 조직 남은돈',L.base,L.rate,L.earn,-L.spent,L.left,L.extra,L.total,L.old6]);
+  S['책임자'] = r5;
+  S['기준'] = [["구분","내용"],["원천",D.notes.source],["카테고리",D.notes.category],["매장",D.notes.stores],["생성",new Date().toLocaleString('ko-KR')]];
+  return S;
+}
+$('xlsx').addEventListener('click',()=>{
+  const P = params(); const R = compute(D,P); const S = toRows(R,P);
+  const tag = `MD${P.r}_AMD${P.ms}_영업몫${P.ss}`;
+  if (typeof XLSX === 'undefined'){
+    const csv = Object.entries(S).map(([k,rows])=>`[${k}]\n`+rows.map(r=>r.map(v=>typeof v==='number'?Math.round(v*1000)/1000:String(v).replace(/,/g,' ')).join(',')).join('\n')).join('\n\n');
+    const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'})); a.download=`이머니_시뮬_${tag}.csv`; a.click(); alert('엑셀 라이브러리를 불러오지 못해 CSV로 저장했습니다(오프라인).'); return;
+  }
+  const wb = XLSX.utils.book_new();
+  for (const [k,rows] of Object.entries(S)){ const ws = XLSX.utils.aoa_to_sheet(rows.map(r=>r.map(v=>typeof v==='number'?Math.round(v*1000)/1000:v))); ws['!cols']=rows[0].map(()=>({wch:16})); XLSX.utils.book_append_sheet(wb, ws, k); }
+  XLSX.writeFile(wb, `이머니_시뮬_${tag}.xlsx`);
+});
+render();
+</script>
+</body>
+</html>
